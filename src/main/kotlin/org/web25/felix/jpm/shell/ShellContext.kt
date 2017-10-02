@@ -8,6 +8,8 @@ import java.io.OutputStream
 
 object ShellContext {
     fun createWriteableShellFile(file: File): ShellFile {
+        file.parentFile.mkdirs()
+        file.setExecutable(true)
         return createWriteableShellFile(FileOutputStream(file))
     }
 

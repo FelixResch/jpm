@@ -1,6 +1,8 @@
 package org.web25.felix.jpm
 
-class MavenPacket(source: String) : Packet() {
+import org.web25.felix.jpm.job.JobContext
+
+class MavenPacket(val source: String, jobContext: JobContext) : Packet(jobContext) {
 
     val groupId: String
 

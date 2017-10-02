@@ -1,13 +1,18 @@
 package org.web25.felix.jpm
 
+import org.web25.felix.jpm.installer.PacketInstallerFactory
+import org.web25.felix.jpm.job.JobContext
 import java.net.URI
 
-class GitPacket(val source: String) : Packet() {
+class GitPacket(val source: String, jobContext: JobContext) : Packet(jobContext) {
 
     override val packetDownloader: PacketDownloader = GitPacketDownloader(source)
 
-    override val dependencyIterator: DependencyIterator
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override val dependencyIterator: DependencyIterator = object : DependencyIterator {
+        override val packets: MutableList<Packet>
+            get() = mutableListOf()
+
+    }
 
     override val binaryPath: String
         get() {
@@ -19,8 +24,9 @@ class GitPacket(val source: String) : Packet() {
             return "${uri.host}$path"
         }
 
-    override val packetInstaller: PacketInstaller
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override val packetInstaller: PacketInstaller by lazy {
+        PacketInstallerFactory.create(this)
+    }
 
     override fun fetchDependencies(): List<Packet> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

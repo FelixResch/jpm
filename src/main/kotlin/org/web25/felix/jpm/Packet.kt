@@ -1,6 +1,8 @@
 package org.web25.felix.jpm
 
-abstract class Packet {
+import org.web25.felix.jpm.job.JobContext
+
+abstract class Packet(val jobContext: JobContext) {
 
     abstract val packetDownloader : PacketDownloader
     abstract val dependencyIterator: DependencyIterator

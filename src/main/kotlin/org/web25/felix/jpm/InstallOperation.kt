@@ -42,7 +42,10 @@ class InstallOperation(val source: String, val commandName: String): Operation {
                 val jpmExecutable = File(globalConfig.binDir, "jpm." + installConfig.commandName)
                 val shellFile = ShellContext.createWriteableShellFile(jpmExecutable)
                 packet.packetInstaller.createRunnable(shellFile)
-                Files.createSymbolicLink(File(globalConfig.binDir, installConfig.commandName).toPath(), jpmExecutable.toPath())
+                shellFile.close()
+                val link = Files.createSymbolicLink(File(globalConfig.binDir, installConfig.commandName).toPath(), jpmExecutable.toPath())
+                link.toFile().setExecutable(true)
+                Start.logger.info("Installation complete!")
             }
         }
     }
@@ -91,7 +94,7 @@ class InstallOperation(val source: String, val commandName: String): Operation {
         return object : Job {
 
             override fun execute(jobContext: JobContext) {
-                jobContext[Packet::class] = GitPacket(source)
+                jobContext[Packet::class] = GitPacket(source, jobContext)
             }
 
         }
@@ -101,7 +104,7 @@ class InstallOperation(val source: String, val commandName: String): Operation {
         return object : Job {
 
             override fun execute(jobContext: JobContext) {
-                jobContext[Packet::class] = MavenPacket(source)
+                jobContext[Packet::class] = MavenPacket(source, jobContext)
             }
         }
     }
